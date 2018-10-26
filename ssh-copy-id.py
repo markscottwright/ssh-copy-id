@@ -79,8 +79,8 @@ class DeployKey():
                 run('echo %s > %s' % (key, self.remote_key_path))
                 run('chmod 600 %s' % self.remote_key_path)
                 copied += 1
-            print
-            print 'Number of key copyed: ', copied
+            print()
+            print('Number of key copyed: ', copied)
             print ("Now try logging into the machine with: 'ssh %s@%s'" %
                    (self.username, self.hostname))
 
@@ -92,6 +92,8 @@ if __name__ == '__main__':
                         help='defaults to ~/.ssh/id_rsa.pub')
     parser.add_argument('-p', nargs='?', dest='port', type=int, default=22,
                         help='defaults to 22')
+    parser.add_argument('-w', nargs='?', dest='password', type=str, default=None,
+                        help='password to send')
     args = parser.parse_args()
 
     hostname = args.hostname
@@ -103,12 +105,13 @@ if __name__ == '__main__':
         username, hostname = hostname.split('@')
 
     ssh_copy_id = DeployKey(hostname, username, port=args.port,
-                            local_key_path=args.identity_file).deploy_key
+                            local_key_path=args.identity_file,
+                            password=args.password).deploy_key
     try:
         execute(ssh_copy_id)
     except KeyboardInterrupt:
-        print '\nKeyboardInterrupt'
+        print('\nKeyboardInterrupt')
     except SystemExit:
-        print '\nSystemExit'
+        print('\nSystemExit')
     except Exception as e:
-        print '\nERROR: ', e
+        print('\nERROR: ', e)
